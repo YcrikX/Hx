@@ -8,7 +8,6 @@ import os
 from keepAlive import keep_alive
 
 token = os.environ['token']
-vc_id = 1181590432120049684
 
 intents = nextcord.Intents.default()
 intents.message_content = True
@@ -119,9 +118,6 @@ async def on_ready():
     bot.add_view(Button())
     print(f"BOT NAME : {bot.user}")
     await bot.change_presence(activity=nextcord.Game(name="《 Fake Link Webhook 》"))
-    voicechannel = bot.get_channel(vc_id)
-    if voicechannel:
-        await voicechannel.connect()
 
 @bot.command(pass_context=True)
 async def setup(ctx):
@@ -134,4 +130,4 @@ async def setup(ctx):
         await ctx.reply('ไม่น่ารักเลยนะค่ะ!')
 
 keep_alive()
-bot.run(token)
+bot.run(process.env.token);
